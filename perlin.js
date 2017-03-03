@@ -1,3 +1,6 @@
+var start = 0;
+var increment = 0.01;
+
 var xOff1 = 0;
 var xOff2 = 10000;
 
@@ -6,21 +9,20 @@ function setup() {
 		window.innerWidth,
 		window.innerHeight
 		);
-	background(50);
 }
 
 function draw() {
 	background(200);
-	fill(100);
 	
-	// let x = random(width);
-	
+	noFill();
+	beginShape();
+	let xOff1 = start;
+	for (let x=0; x<width; x++) {
+		let y = noise(xOff1) * height;
+		vertex(x, y);
+		xOff1 += increment;
+	}
+	endShape();
 
-	let x = map(noise(xOff1), 0, 1, 0, width);
-	let y = map(noise(xOff2), 0, 1, 0, height);
-	
-	ellipse(x, y, 20, 20);
-
-	xOff1 += 0.01;
-	xOff2 += 0.005;
+	start += increment;
 }
