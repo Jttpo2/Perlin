@@ -7,26 +7,27 @@ var xOff2 = 10000;
 
 function setup() {
 	createCanvas(
-		window.innerWidth,
-		window.innerHeight
+		// window.innerWidth,
+		// window.innerHeight
+		200, 200
 		);
+
+	pixelDensity(1);
 }
 
 function draw() {
-	background(200);
-	
-	noFill();
-	beginShape();
-	let xOff1 = start;
-	let xOff2 = start;
-	for (let x=0; x<width; x++) {
-		let y = map(noise(xOff1), 0, 1, 0, height);
-		// vertex(x, y);
-		let ySine = map(sin(xOff1), -1, 1, -100, 100);
-		vertex(x, y + ySine);
-		xOff1 += noiseScale;
-	}
-	endShape();
+	loadPixels();
 
-	start += increment;
+	for (let x=0; x<width; x++) {
+		for (let y=0;y<height; y++) {
+			let index = (x + y * width) * 4;
+			let r = random(255);
+
+			pixels[index+0] = r; // r
+			pixels[index+1] = r; // g
+			pixels[index+2] = r; // b
+			pixels[index+3] = 255;
+		}
+	}
+	updatePixels();
 }
