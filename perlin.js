@@ -2,6 +2,8 @@ var increment = 0.1;
 var scl = 20;
 var cols, rows;
 
+var zOff = 0;
+
 var fr;
 
 function setup() {
@@ -27,7 +29,7 @@ function draw() {
 		let xOff = 0;
 		for (let x=0; x<cols; x++) {
 			let index = (x + y * width) * 4;
-			let angle = noise(xOff, yOff) * TWO_PI;
+			let angle = noise(xOff, yOff, zOff) * TWO_PI;
 
 			let v = p5.Vector.fromAngle(angle);
 			xOff += increment;
@@ -40,8 +42,10 @@ function draw() {
 			pop();
 		}
 		yOff += increment;
+
+		zOff += 0.001;
 	}
 
 	fr.html(floor(frameRate()));
-	noLoop();
+	
 }
