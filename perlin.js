@@ -7,10 +7,10 @@ var zOff = 0;
 var fr;
 
 particles = [];
-numberOfParticles = 5000;
+numberOfParticles = 1000;
 
 var flowField = [];
-var flowFieldMag = 0.1;
+var flowFieldMag = 0.5;
 
 function setup() {
 	createCanvas(
@@ -18,6 +18,8 @@ function setup() {
 		// window.innerHeight
 		500, 500
 		);
+	background(255);
+
 	cols = floor(width/scl);
 	rows = floor(height/scl);
 
@@ -32,7 +34,7 @@ function setup() {
 }
 
 function draw() {
-	background(255, 2);
+	// background(255);
 
 	let yOff = 0;
 	
@@ -53,7 +55,7 @@ function draw() {
 		}
 		yOff += increment;
 
-		zOff += 0.00002;
+		zOff += 0.000002;
 	}
 
 	for (let i=0; i<particles.length; i++) {
