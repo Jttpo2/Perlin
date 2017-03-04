@@ -40,10 +40,9 @@ function draw() {
 		let xOff = 0;
 		for (let x=0; x<cols; x++) {
 			let index = (x + y * cols);
-
 			let angle = noise(xOff, yOff, zOff) * TWO_PI;
-
 			let v = p5.Vector.fromAngle(angle);
+			v.setMag(5);
 			flowField[index] = v;
 
 			xOff += increment;
