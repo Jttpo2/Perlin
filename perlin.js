@@ -7,14 +7,16 @@ var zOff = 0;
 var fr;
 
 particles = [];
+numberOfParticles = 5000;
 
 var flowField = [];
+var flowFieldMag = 0.1;
 
 function setup() {
 	createCanvas(
 		// window.innerWidth,
 		// window.innerHeight
-		400, 400
+		500, 500
 		);
 	cols = floor(width/scl);
 	rows = floor(height/scl);
@@ -23,14 +25,14 @@ function setup() {
 
 	flowField = new Array(cols * rows);
 
-	for (let i=0; i<100; i++) {
+	for (let i=0; i<numberOfParticles; i++) {
 		particles[i] = new Particle();	
 	}
 	
 }
 
 function draw() {
-	background(255);
+	background(255, 2);
 
 	let yOff = 0;
 	
@@ -40,24 +42,18 @@ function draw() {
 		let xOff = 0;
 		for (let x=0; x<cols; x++) {
 			let index = (x + y * cols);
-			let angle = noise(xOff, yOff, zOff) * TWO_PI;
+			let angle = noise(xOff, yOff, zOff) * TWO_PI*4;
 			let v = p5.Vector.fromAngle(angle);
-			v.setMag(5);
+			v.setMag(flowFieldMag);
 			flowField[index] = v;
 
+			// drawVector(v, x, y);
+			
 			xOff += increment;
-
-			stroke(0, 50);
-			push();
-			translate(x * scl, y * scl);
-			rotate(v.heading());
-			strokeWeight(1);
-			line(0, 0, scl, 0);
-			pop();
 		}
 		yOff += increment;
 
-		zOff += 0.001;
+		zOff += 0.00002;
 	}
 
 	for (let i=0; i<particles.length; i++) {
@@ -69,4 +65,14 @@ function draw() {
 	
 	fr.html(floor(frameRate()));
 	
+}
+
+function drawVector(v, x, y) {
+	stroke(0, 50);
+			push();
+			translate(x * scl, y * scl);
+			rotate(v.heading());
+			strokeWeight(1);
+			line(0, 0, scl, 0);
+			pop();
 }
