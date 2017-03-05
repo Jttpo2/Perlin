@@ -4,9 +4,13 @@ function Particle() {
 	this.acc = createVector(0, 0);
 	this.maxSpeed = 4;
 	this.size = 1;
+	this.color = 0;
+	this.alpha = 1;
 	this.previous = this.pos.copy();
 
 	this.update = function() {
+		this.updatePrev();
+
 		this.vel.add(this.acc);
 		this.vel.limit(this.maxSpeed);
 		this.pos.add(this.vel);
@@ -18,8 +22,8 @@ function Particle() {
 	}
 
 	this.show = function() {
-		stroke(0, 5);
-		strokeWeight(size);
+		stroke(this.color, this.alpha);
+		strokeWeight(this.size);
 		// point (this.pos.x, this.pos.y);
 		line(this.previous.x, this.previous.y, this.pos.x, this.pos.y);
 	}

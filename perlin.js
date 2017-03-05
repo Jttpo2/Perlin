@@ -3,6 +3,7 @@ var scl = 20;
 var cols, rows;
 
 var zOff = 0;
+var zIncrement = 0.000002;
 
 var fr;
 
@@ -10,15 +11,20 @@ particles = [];
 numberOfParticles = 1000;
 
 var flowField = [];
-var flowFieldMag = 0.5;
+var flowFieldMag = 0.2;
+
+var bgColor = 255;
+var alpha;
 
 function setup() {
+	alpha = 0;
+
 	createCanvas(
 		// window.innerWidth,
 		// window.innerHeight
 		500, 500
 		);
-	background(255);
+	background(bgColor);
 
 	cols = floor(width/scl);
 	rows = floor(height/scl);
@@ -34,10 +40,9 @@ function setup() {
 }
 
 function draw() {
-	// background(255);
+	background(bgColor, alpha);
 
 	let yOff = 0;
-	
 
 	noiseDetail(1, 0.1);
 	for (let y=0;y<rows; y++) {
@@ -55,7 +60,7 @@ function draw() {
 		}
 		yOff += increment;
 
-		zOff += 0.000002;
+		zOff += zIncrement;
 	}
 
 	for (let i=0; i<particles.length; i++) {
