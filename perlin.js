@@ -18,6 +18,9 @@ var flowFieldMag = 0.2;
 var bgColor = 255;
 var alphaValue = 2;
 
+var cycleTimeInMillis = 12*1000;
+var timerEndTime;
+
 function setup() {
 	let canvas = createCanvas(
 		window.innerWidth /2,
@@ -34,12 +37,10 @@ function setup() {
 
 	fr = createP('');
 
-	flowField = new Array(cols * rows);
+	setupFlowfield();
+	createParticles();
 
-	for (let i=0; i<numberOfParticles; i++) {
-		particles[i] = new Particle();	
-	}
-	
+	setTimer(cycleTimeInMillis);
 }
 
 function draw() {
@@ -74,6 +75,11 @@ function draw() {
 	}
 	
 	// showFramerate();
+
+	if (checkTimer()) {
+		reset();
+		setTimer(cycleTimeInMillis);
+	}
 	
 }
 
@@ -125,6 +131,33 @@ function keyReleased() {
 	}
 }
 
+function reset() {
+	background(bgColor);
+	
+	noiseSeed(random()*1000);
+
+	setupFlowfield();
+	createParticles();
+}
+
+function setupFlowfield() {
+	flowField = new Array(cols * rows);
+}
+
+function createParticles() {
+	for (let i=0; i<numberOfParticles; i++) {
+		particles[i] = new Particle();	
+	}
+}
+
 function showFramerate() {
 	fr.html(floor(frameRate()));
+}
+
+function setTimer(millisAhead) {
+	timerEndTime = millis() + millisAhead;
+}
+
+function checkTimer() {
+	return timerEndTime < millis();
 }
