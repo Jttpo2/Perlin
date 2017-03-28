@@ -4,6 +4,8 @@ var cols, rows;
 
 var zOff = 0;
 var zIncrement = 0.000002;
+var noiseOctaves = 4;
+var falloff = 0.2;
 
 var fr;
 
@@ -14,11 +16,9 @@ var flowField = [];
 var flowFieldMag = 0.2;
 
 var bgColor = 255;
-var alpha;
+var alphaValue = 2;
 
 function setup() {
-	alpha = 0;
-
 	createCanvas(
 		// window.innerWidth,
 		// window.innerHeight
@@ -40,11 +40,11 @@ function setup() {
 }
 
 function draw() {
-	background(bgColor, alpha);
+	background(bgColor, alphaValue);
 
 	let yOff = 0;
 
-	noiseDetail(1, 0.1);
+	noiseDetail(noiseOctaves, falloff);
 	for (let y=0;y<rows; y++) {
 		let xOff = 0;
 		for (let x=0; x<cols; x++) {
@@ -70,7 +70,7 @@ function draw() {
 		particles[i].edges();
 	}
 	
-	fr.html(floor(frameRate()));
+	// showFramerate();
 	
 }
 
@@ -82,4 +82,46 @@ function drawVector(v, x, y) {
 			strokeWeight(1);
 			line(0, 0, scl, 0);
 			pop();
+}
+
+function keyReleased() {
+	switch (key) {
+		case 'A': 
+			zIncrement *= 1.30;
+			console.log('zIncrement: ' + zIncrement);
+		break;
+		case 'Z': 
+			zIncrement /= 1.30;
+			console.log('zIncrement: ' + zIncrement);
+		break;
+		case 'S': 
+			alphaValue *= 1.30;
+			console.log('alphaValue: ' + alphaValue);
+		break;
+		case 'X': 
+			alphaValue /= 1.30;
+			console.log('alphaValue: ' + alphaValue);
+		break;
+		case 'D': 
+			noiseOctaves += 1;
+			console.log('noiseOctaves: ' + noiseOctaves);
+		break;
+		case 'C': 
+			noiseOctaves -= 1;
+			console.log('noiseOctaves: ' + noiseOctaves);
+		break;
+		case 'F': 
+			falloff *= 1.30;
+			console.log('falloff: ' + falloff);
+		break;
+		case 'V': 
+			falloff /= 1.30;
+			console.log('falloff: ' + falloff);
+		break;
+		default: console.log('wha?');
+	}
+}
+
+function showFramerate() {
+	fr.html(floor(frameRate()));
 }
