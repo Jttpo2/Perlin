@@ -4,8 +4,8 @@ function Particle() {
 	this.acc = createVector(0, 0);
 	this.maxSpeed = 4;
 	this.size = 1;
-	this.color = 180;
-	this.alpha = 10;
+	this.color = 110;
+	this.alpha = 1;
 	this.previous = this.pos.copy();
 
 	this.update = function() {

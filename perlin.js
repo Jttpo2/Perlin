@@ -19,11 +19,14 @@ var bgColor = 255;
 var alphaValue = 2;
 
 function setup() {
-	createCanvas(
-		// window.innerWidth,
-		// window.innerHeight
-		500, 500
+	let canvas = createCanvas(
+		window.innerWidth /2,
+		window.innerHeight /2
+		// 500, 500
 		);
+
+	canvas.parent('sketch-holder');
+
 	background(bgColor);
 
 	cols = floor(width/scl);
