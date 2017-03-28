@@ -18,7 +18,7 @@ var flowFieldMag = 0.2;
 var bgColor = 255;
 var alphaValue = 2;
 
-var cycleTimeInMillis = 12*1000;
+var cycleTimeInMillis = 14*1000;
 var timerEndTime;
 
 function setup() {
