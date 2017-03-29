@@ -61,7 +61,6 @@ function setup() {
 
 	// Start new pattern timer
 	setTimer(cycleTimeInMillis);
-}
 
 function draw() {
 	background(bgColor, alphaValue);
