@@ -1,25 +1,27 @@
 // Perlin noise experiment v 0.1
 
 var increment = 0.1;
-var scl = 20;
+var scl = 20; 
 var cols, rows;
 
+// Perlin noise
 var zOff = 0;
 var zIncrement = 0.000002;
 var noiseOctaves = 1;
 var falloff = 0.2;
 
-var fr;
+var fr; // Framerate holder
 
 particles = [];
 numberOfParticles = 1000;
 
 var flowField = [];
-var flowFieldMag = 0.2;
+var flowFieldMag = 0.2; // Strength of flow field
 
 var bgColor = 255;
 var alphaValue = 2;
 
+// New pattern timer
 var cycleTimeInMillis = 14*1000;
 var timerEndTime;
 
@@ -30,6 +32,7 @@ function setup() {
 		// 500, 500
 		);
 
+	// Set parent html element
 	canvas.parent('sketch-holder');
 
 	background(bgColor);
@@ -42,6 +45,7 @@ function setup() {
 	setupFlowfield();
 	createParticles();
 
+	// Start new pattern timer
 	setTimer(cycleTimeInMillis);
 }
 
@@ -50,6 +54,7 @@ function draw() {
 
 	let yOff = 0;
 
+	// Update flow field
 	noiseDetail(noiseOctaves, falloff);
 	for (let y=0;y<rows; y++) {
 		let xOff = 0;
@@ -69,6 +74,7 @@ function draw() {
 		zOff += zIncrement;
 	}
 
+	// Update particles
 	for (let i=0; i<particles.length; i++) {
 		particles[i].follow(flowField);
 		particles[i].update();
@@ -76,15 +82,15 @@ function draw() {
 		particles[i].edges();
 	}
 	
-	// showFramerate();
-
 	if (checkTimer()) {
 		reset();
 		setTimer(cycleTimeInMillis);
 	}
 	
+	// showFramerate();
 }
 
+// Visualizes a (flow field) vector
 function drawVector(v, x, y) {
 	stroke(0, 50);
 			push();
@@ -95,6 +101,7 @@ function drawVector(v, x, y) {
 			pop();
 }
 
+// Keyboard input handler
 function keyReleased() {
 	switch (key) {
 		case 'A': 
@@ -133,9 +140,11 @@ function keyReleased() {
 	}
 }
 
+// Procures a new pattern
 function reset() {
 	background(bgColor);
 	
+	// New random seed necessary for new pattern
 	noiseSeed(random()*1000);
 
 	setupFlowfield();
@@ -152,14 +161,17 @@ function createParticles() {
 	}
 }
 
+// Displays framerate on screen
 function showFramerate() {
 	fr.html(floor(frameRate()));
 }
 
+// Sets new pattern timer
 function setTimer(millisAhead) {
 	timerEndTime = millis() + millisAhead;
 }
 
+// Returns whether the timer has run out
 function checkTimer() {
 	return timerEndTime < millis();
 }
