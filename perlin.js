@@ -36,6 +36,7 @@ var fadeCycleInMillis = 5*1000;
 var fadeTimerEnd;
 
 var fadeAlphaValue = 1;
+var fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
 var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
 function setup() {
@@ -87,6 +88,8 @@ function draw() {
 			
 			reset();
 			setTimer(cycleTimeInMillis);
+		} else {
+			accelerateFading();
 		}
 	}
 
@@ -205,7 +208,8 @@ function fadeToWhite() {
 	prevBgColor = bgColor;
 	prevAlphaValue = alphaValue;
 
-	alphaValue = fadeAlphaValue;
+	fadeAlphaValueTemp = fadeAlphaValue;
+	alphaValue = fadeAlphaValueTemp;
 
 	blendMode(ADD);
 	isFading = true;
@@ -217,6 +221,11 @@ function stopFading() {
 
 	blendMode(BLEND);
 	isFading = false;
+}
+
+function accelerateFading() {
+	fadeAlphaValueTemp *= 1.05;
+	alphaValue = fadeAlphaValueTemp;
 }
 
 // Returns whether all pixels in the canvas are equal to the desired background color
