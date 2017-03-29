@@ -4,7 +4,7 @@ var cols, rows;
 
 var zOff = 0;
 var zIncrement = 0.000002;
-var noiseOctaves = 4;
+var noiseOctaves = 1;
 var falloff = 0.2;
 
 var fr;
