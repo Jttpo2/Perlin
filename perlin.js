@@ -21,9 +21,23 @@ var flowFieldMag = 0.2; // Strength of flow field
 var bgColor = 255;
 var alphaValue = 2;
 
+var prevBgColor;
+var prevAlphaValue;
+
+var isFading;
+
 // New pattern timer
-var cycleTimeInMillis = 14*1000;
+// var cycleTimeInMillis = 14*1000;
+var cycleTimeInMillis = 13*1000;
 var timerEndTime;
+
+// Fade timer
+var fadeCycleInMillis = 5*1000;
+var fadeTimerEnd;
+
+var fadeAlphaValue = 1;
+var fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
+var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
 function setup() {
 	let canvas = createCanvas(
@@ -52,9 +66,39 @@ function setup() {
 function draw() {
 	background(bgColor, alphaValue);
 
+	updateFlowField();
+	updateParticles();
+	
+	if (!isFading && checkTimer()) {
+		setFadeTimer(fadeCycleInMillis);
+		fadeToWhite();
+	}
+
+	// if (isFading && checkFadeTimer()) {
+	// 	stopFading();
+
+	// 	reset();
+	// 	setTimer(cycleTimeInMillis);
+	// }
+	
+	if (isFading) {
+		if (isBackgroundHomogenic()) {
+			// Fading is complete
+			stopFading();
+			
+			reset();
+			setTimer(cycleTimeInMillis);
+		} else {
+			accelerateFading();
+		}
+	}
+
+	// showFramerate();
+}
+
+function updateFlowField() {
 	let yOff = 0;
 
-	// Update flow field
 	noiseDetail(noiseOctaves, falloff);
 	for (let y=0;y<rows; y++) {
 		let xOff = 0;
@@ -73,21 +117,15 @@ function draw() {
 
 		zOff += zIncrement;
 	}
+}
 
-	// Update particles
+function updateParticles() {
 	for (let i=0; i<particles.length; i++) {
 		particles[i].follow(flowField);
 		particles[i].update();
 		particles[i].show();
 		particles[i].edges();
 	}
-	
-	if (checkTimer()) {
-		reset();
-		setTimer(cycleTimeInMillis);
-	}
-	
-	// showFramerate();
 }
 
 // Visualizes a (flow field) vector
@@ -104,6 +142,10 @@ function drawVector(v, x, y) {
 // Keyboard input handler
 function keyReleased() {
 	switch (key) {
+		case ' ':
+			fadeToWhite();
+			console.log("Space");
+			break;
 		case 'A': 
 			zIncrement *= 1.30;
 			console.log('zIncrement: ' + zIncrement);
@@ -151,6 +193,65 @@ function reset() {
 	createParticles();
 }
 
+function fadeToWhite() {
+	prevBgColor = bgColor;
+	prevAlphaValue = alphaValue;
+
+	fadeAlphaValueTemp = fadeAlphaValue;
+	alphaValue = fadeAlphaValueTemp;
+
+	blendMode(ADD);
+	isFading = true;
+}
+
+function stopFading() {
+	bgColor = prevBgColor;
+	alphaValue = prevAlphaValue;
+
+	blendMode(BLEND);
+	isFading = false;
+}
+
+// Accelerate fading with time, to remove heavy black traces quicker
+function accelerateFading() {
+	fadeAlphaValueTemp *= 1.05;
+	alphaValue = fadeAlphaValueTemp;
+}
+
+// Returns whether all pixels in the canvas are equal to the desired background color
+function isBackgroundHomogenic() {
+	loadPixels();
+
+	// Consider a range around the desired color acceptable
+	let bgColorDiff = abs(bgColorSpan - bgColor)
+
+	let index = 0;
+	for (let x=0; x<width; x++) {
+		for (let y=0; y<height; y++) {
+			index = 4 * (x + y * width);
+
+			if (abs(pixels[index +0] - bgColor) > bgColorSpan ||
+				abs(pixels[index +1] - bgColor) > bgColorSpan ||
+				abs(pixels[index +2] - bgColor) > bgColorSpan) {
+				// abs(pixels[index +3] - bgColor) > bgColorSpan) { // Don't need to consider alpha
+				
+				// Pixel color is dissimilar to desired background
+				return false;
+			}
+		}	
+	}
+	// No pixel was dissimilar
+	return true;
+
+	// Pixel density not needed this function
+	// let d = pixelDensity;
+	// for (let i=0; i<d; i++) {
+	// 	for (let j=0; j<d; j++) {
+	// 		let index = 
+	// 	}
+	// }
+}
+
 function setupFlowfield() {
 	flowField = new Array(cols * rows);
 }
@@ -171,7 +272,17 @@ function setTimer(millisAhead) {
 	timerEndTime = millis() + millisAhead;
 }
 
-// Returns whether the timer has run out
+// Sets fade timer
+function setFadeTimer(millisAhead) {
+	fadeTimerEnd = millis() + millisAhead;
+}
+
+// Returns whether the new pattern timer has run out
 function checkTimer() {
 	return timerEndTime < millis();
+}
+
+// Returns whether the fade timer has run out
+function checkFadeTimer() {
+	return fadeTimerEnd < millis();
 }
