@@ -1,3 +1,5 @@
+// Perlin noise experiment v 0.1
+
 var increment = 0.1;
 var scl = 20;
 var cols, rows;
