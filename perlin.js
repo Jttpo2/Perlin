@@ -52,9 +52,20 @@ function setup() {
 function draw() {
 	background(bgColor, alphaValue);
 
+	updateFlowField();
+	updateParticles();
+	
+	if (checkTimer()) {
+		reset();
+		setTimer(cycleTimeInMillis);
+	}
+	
+	// showFramerate();
+}
+
+function updateFlowField() {
 	let yOff = 0;
 
-	// Update flow field
 	noiseDetail(noiseOctaves, falloff);
 	for (let y=0;y<rows; y++) {
 		let xOff = 0;
@@ -73,21 +84,15 @@ function draw() {
 
 		zOff += zIncrement;
 	}
+}
 
-	// Update particles
+function updateParticles() {
 	for (let i=0; i<particles.length; i++) {
 		particles[i].follow(flowField);
 		particles[i].update();
 		particles[i].show();
 		particles[i].edges();
 	}
-	
-	if (checkTimer()) {
-		reset();
-		setTimer(cycleTimeInMillis);
-	}
-	
-	// showFramerate();
 }
 
 // Visualizes a (flow field) vector
