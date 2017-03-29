@@ -89,6 +89,7 @@ function draw() {
 			reset();
 			setTimer(cycleTimeInMillis);
 		} else {
+			// Fade faster with time
 			accelerateFading();
 		}
 	}
@@ -106,7 +107,7 @@ function updateFlowField() {
 			let index = (x + y * cols);
 			let angle = noise(xOff, yOff, zOff) * TWO_PI*4;
 			let v = p5.Vector.fromAngle(angle);
-			v.setMag(flowFieldMag);
+			v.setMag(random(flowFieldMag*0.9, flowFieldMag*1.1));
 			flowField[index] = v;
 
 			// drawVector(v, x, y);
@@ -178,6 +179,15 @@ function keyReleased() {
 			falloff /= 1.30;
 			console.log('falloff: ' + falloff);
 		break;
+		case 'G':
+			flowFieldMag *=1.1;
+			console.log('flowFieldMag: ' + flowFieldMag);
+		break;
+		case 'B':
+			flowFieldMag /= 1.1;
+			console.log('flowFieldMag: ' + flowFieldMag);
+			break;
+
 		default: console.log('wha?');
 	}
 }
