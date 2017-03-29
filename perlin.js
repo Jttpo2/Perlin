@@ -284,4 +284,5 @@ function checkTimer() {
 
 // Returns whether the fade timer has run out
 function checkFadeTimer() {
-	return fadeTimerEnd < millis()
+	return fadeTimerEnd < millis();
+}
