@@ -146,7 +146,6 @@ function keyReleased() {
 			fadeToWhite();
 			console.log("Space");
 			break;
-
 		case 'A': 
 			zIncrement *= 1.30;
 			console.log('zIncrement: ' + zIncrement);
@@ -194,16 +193,6 @@ function reset() {
 	createParticles();
 }
 
-function flash() {
-	// blendMode(MULTIPLY);
-	blendMode(ADD);
-	// prevAlphaValue = alphaValue;
-	// prevBgColor = bgColor;
-
-	// alphaValue = 50;
-	// bgColor = 255;
-}
-
 function fadeToWhite() {
 	prevBgColor = bgColor;
 	prevAlphaValue = alphaValue;
@@ -223,6 +212,7 @@ function stopFading() {
 	isFading = false;
 }
 
+// Accelerate fading with time, to remove heavy black traces quicker
 function accelerateFading() {
 	fadeAlphaValueTemp *= 1.05;
 	alphaValue = fadeAlphaValueTemp;
@@ -242,20 +232,18 @@ function isBackgroundHomogenic() {
 
 			if (abs(pixels[index +0] - bgColor) > bgColorSpan ||
 				abs(pixels[index +1] - bgColor) > bgColorSpan ||
-				abs(pixels[index +2] - bgColor) > bgColorSpan)
+				abs(pixels[index +2] - bgColor) > bgColorSpan) {
 				// abs(pixels[index +3] - bgColor) > bgColorSpan) { // Don't need to consider alpha
-				{
+				
 				// Pixel color is dissimilar to desired background
-				console.log("Pixel not equal")
 				return false;
 			}
 		}	
 	}
 	// No pixel was dissimilar
-	console.log("All pixels good");
 	return true;
 
-
+	// Pixel density not needed this function
 	// let d = pixelDensity;
 	// for (let i=0; i<d; i++) {
 	// 	for (let j=0; j<d; j++) {
@@ -288,7 +276,6 @@ function setTimer(millisAhead) {
 function setFadeTimer(millisAhead) {
 	fadeTimerEnd = millis() + millisAhead;
 }
-
 
 // Returns whether the new pattern timer has run out
 function checkTimer() {
