@@ -35,6 +35,9 @@ var timerEndTime;
 var fadeCycleInMillis = 5*1000;
 var fadeTimerEnd;
 
+var fadeAlphaValue = 1;
+var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
+
 function setup() {
 	let canvas = createCanvas(
 		window.innerWidth /2,
@@ -70,19 +73,22 @@ function draw() {
 		fadeToWhite();
 	}
 
-	if (isFading && checkFadeTimer()) {
-		stopFading();
+	// if (isFading && checkFadeTimer()) {
+	// 	stopFading();
 
-		reset();
-		setTimer(cycleTimeInMillis);
-	}
-	
-	// if (isFading) {
-	// 	if (isBackgroundHomogenic()) {
-	// 		// Fading is complete
-	// 		stopFading();
-	// 	}
+	// 	reset();
+	// 	setTimer(cycleTimeInMillis);
 	// }
+	
+	if (isFading) {
+		if (isBackgroundHomogenic()) {
+			// Fading is complete
+			stopFading();
+			
+			reset();
+			setTimer(cycleTimeInMillis);
+		}
+	}
 
 	// showFramerate();
 }
@@ -199,7 +205,7 @@ function fadeToWhite() {
 	prevBgColor = bgColor;
 	prevAlphaValue = alphaValue;
 
-	alphaValue = 1;
+	alphaValue = fadeAlphaValue;
 
 	blendMode(ADD);
 	isFading = true;
@@ -215,8 +221,38 @@ function stopFading() {
 
 // Returns whether all pixels in the canvas are equal to the desired background color
 function isBackgroundHomogenic() {
-	let d = pixelDensity;
+	loadPixels();
+
+	// Consider a range around the desired color acceptable
+	let bgColorDiff = abs(bgColorSpan - bgColor)
+
+	let index = 0;
+	for (let x=0; x<width; x++) {
+		for (let y=0; y<height; y++) {
+			index = 4 * (x + y * width);
+
+			if (abs(pixels[index +0] - bgColor) > bgColorSpan ||
+				abs(pixels[index +1] - bgColor) > bgColorSpan ||
+				abs(pixels[index +2] - bgColor) > bgColorSpan)
+				// abs(pixels[index +3] - bgColor) > bgColorSpan) { // Don't need to consider alpha
+				{
+				// Pixel color is dissimilar to desired background
+				console.log("Pixel not equal")
+				return false;
+			}
+		}	
+	}
+	// No pixel was dissimilar
+	console.log("All pixels good");
 	return true;
+
+
+	// let d = pixelDensity;
+	// for (let i=0; i<d; i++) {
+	// 	for (let j=0; j<d; j++) {
+	// 		let index = 
+	// 	}
+	// }
 }
 
 function setupFlowfield() {
