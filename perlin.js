@@ -21,9 +21,19 @@ var flowFieldMag = 0.2; // Strength of flow field
 var bgColor = 255;
 var alphaValue = 2;
 
+var prevBgColor;
+var prevAlphaValue;
+
+var isFading;
+
 // New pattern timer
-var cycleTimeInMillis = 14*1000;
+// var cycleTimeInMillis = 14*1000;
+var cycleTimeInMillis = 13*1000;
 var timerEndTime;
+
+// Fade timer
+var fadeCycleInMillis = 5*1000;
+var fadeTimerEnd;
 
 function setup() {
 	let canvas = createCanvas(
@@ -55,11 +65,25 @@ function draw() {
 	updateFlowField();
 	updateParticles();
 	
-	if (checkTimer()) {
+	if (!isFading && checkTimer()) {
+		setFadeTimer(fadeCycleInMillis);
+		fadeToWhite();
+	}
+
+	if (isFading && checkFadeTimer()) {
+		stopFading();
+
 		reset();
 		setTimer(cycleTimeInMillis);
 	}
 	
+	// if (isFading) {
+	// 	if (isBackgroundHomogenic()) {
+	// 		// Fading is complete
+	// 		stopFading();
+	// 	}
+	// }
+
 	// showFramerate();
 }
 
@@ -109,6 +133,11 @@ function drawVector(v, x, y) {
 // Keyboard input handler
 function keyReleased() {
 	switch (key) {
+		case ' ':
+			fadeToWhite();
+			console.log("Space");
+			break;
+
 		case 'A': 
 			zIncrement *= 1.30;
 			console.log('zIncrement: ' + zIncrement);
@@ -156,6 +185,40 @@ function reset() {
 	createParticles();
 }
 
+function flash() {
+	// blendMode(MULTIPLY);
+	blendMode(ADD);
+	// prevAlphaValue = alphaValue;
+	// prevBgColor = bgColor;
+
+	// alphaValue = 50;
+	// bgColor = 255;
+}
+
+function fadeToWhite() {
+	prevBgColor = bgColor;
+	prevAlphaValue = alphaValue;
+
+	alphaValue = 1;
+
+	blendMode(ADD);
+	isFading = true;
+}
+
+function stopFading() {
+	bgColor = prevBgColor;
+	alphaValue = prevAlphaValue;
+
+	blendMode(BLEND);
+	isFading = false;
+}
+
+// Returns whether all pixels in the canvas are equal to the desired background color
+function isBackgroundHomogenic() {
+	let d = pixelDensity;
+	return true;
+}
+
 function setupFlowfield() {
 	flowField = new Array(cols * rows);
 }
@@ -176,7 +239,18 @@ function setTimer(millisAhead) {
 	timerEndTime = millis() + millisAhead;
 }
 
-// Returns whether the timer has run out
+// Sets fade timer
+function setFadeTimer(millisAhead) {
+	fadeTimerEnd = millis() + millisAhead;
+}
+
+
+// Returns whether the new pattern timer has run out
 function checkTimer() {
 	return timerEndTime < millis();
+}
+
+// Returns whether the fade timer has run out
+function checkFadeTimer() {
+	return fadeTimerEnd < millis();
 }
