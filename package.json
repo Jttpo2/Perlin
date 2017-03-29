@@ -1,6 +1,6 @@
 {
   "name": "perlin",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Perlin noise experiment",
   "main": "index.html",
   "scripts": {
