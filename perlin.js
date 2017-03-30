@@ -6,7 +6,7 @@ var cols, rows;
 
 // Perlin noise
 var zOff = 0;
-var zIncrement = 0.0002;
+var zIncrement = 0.000002; 
 var noiseOctaves = 1;
 var falloff = 0.2;
 
@@ -110,7 +110,7 @@ function updateFlowField() {
 			v.setMag(random(flowFieldMag*0.9, flowFieldMag*1.1));
 			flowField[index] = v;
 
-			drawVector(v, x, y); 
+			// drawVector(v, x, y); 
 			
 			xOff += increment;
 		}
@@ -186,6 +186,14 @@ function keyReleased() {
 		case 'B':
 			flowFieldMag /= 1.1;
 			console.log('flowFieldMag: ' + flowFieldMag);
+			break;
+		case 'H':
+			
+			console.log();
+			break;
+		case 'N':
+			
+			console.log();
 			break;
 
 		default: console.log('wha?');
