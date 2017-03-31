@@ -1,37 +1,40 @@
-function Particle() {
-	this.pos = createVector(random(width), random(height));
-	this.vel = createVector(0, 0); //p5.Vector.random2D();
-	this.acc = createVector(0, 0);
-	this.maxSpeed = 4;
-	this.size = 1;
-	this.color = 110;
-	this.alpha = 1;
-	this.previous = this.pos.copy();
+(function() {
+	"use strict";
 
-	this.update = function() {
-		this.updatePrev();
+	function Particle() {
+		this.pos = createVector(random(width), random(height));
+		this.vel = createVector(0, 0); //p5.Vector.random2D();
+		this.acc = createVector(0, 0);
+		this.maxSpeed = 4;
+		this.size = 1;
+		this.color = 110;
+		this.alpha = 1;
+		this.previous = this.pos.copy();
 
-		this.vel.add(this.acc);
-		this.vel.limit(this.maxSpeed);
-		this.pos.add(this.vel);
-		this.acc.mult(0);
-	}
+		this.update = function() {
+			this.updatePrev();
 
-	this.applyForce = function(force) {
-		this.acc.add(force);
-	}
+			this.vel.add(this.acc);
+			this.vel.limit(this.maxSpeed);
+			this.pos.add(this.vel);
+			this.acc.mult(0);
+		};
 
-	this.show = function() {
-		stroke(this.color, this.alpha);
-		strokeWeight(this.size);
+		this.applyForce = function(force) {
+			this.acc.add(force);
+		};
+
+		this.show = function() {
+			stroke(this.color, this.alpha);
+			strokeWeight(this.size);
 		// point (this.pos.x, this.pos.y);
 		line(this.previous.x, this.previous.y, this.pos.x, this.pos.y);
-	}
+	};
 
 	this.updatePrev = function() {
 		this.previous.x = this.pos.x;
 		this.previous.y = this.pos.y;
-	}
+	};
 
 	this.edges = function() {
 		if (this.pos.x > width) {
@@ -50,7 +53,7 @@ function Particle() {
 			this.pos.y = height;
 			this.updatePrev();
 		}
-	}
+	};
 
 	this.follow = function(vectors) {
 		let x = floor( this.pos.x / scl);
@@ -58,5 +61,7 @@ function Particle() {
 		let index = x + y * cols;
 		let force = vectors[index];
 		this.applyForce(force);
-	}
+	};
 }
+
+})();

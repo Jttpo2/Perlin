@@ -1,15 +1,17 @@
-var MouseModeEnum = {
-	IGNORE: 'ignore',
-	ATTRACT: 'attract',
-	REPEL: 'repel'
-}
+(function() {
+	"use strict";
 
-// Make into constant
-Object.freeze(MouseModeEnum);
-// console.log('MouseModeEnum isFrozen: ' + Object.isFrozen(MouseModeEnum));
+	var MouseModeEnum = {
+		IGNORE: 'ignore',
+		ATTRACT: 'attract',
+		REPEL: 'repel'
+	};
 
-Object.seal(MouseModeEnum);
-// console.log('MouseModeEnum isSealed: ' + Object.isSealed(MouseModeEnum));
+	// Make into constant
+	Object.freeze(MouseModeEnum);
+	// console.log('MouseModeEnum isFrozen: ' + Object.isFrozen(MouseModeEnum));
 
+	Object.seal(MouseModeEnum);
+	// console.log('MouseModeEnum isSealed: ' + Object.isSealed(MouseModeEnum));
 
-
+})();
