@@ -3,27 +3,27 @@
 
 // Visual perlin noise experiment
 
-var windowScale = 0.75; // What portion of the window for the canvas to take up  
+let windowScale = 0.7; // What portion of the window for the canvas to take up  
 
-var increment = 0.1;
-var scl = 20; // How many columns/rows to split the width/height of the canvas in
-var cols, rows; 
+let increment = 0.1;
+let scl = 20; // How many columns/rows to split the width/height of the canvas in
+let cols, rows; 
 
 // Perlin noise
-var zOff = 0;
-var zIncrement = 0.000002; 
-var noiseOctaves = 1;
-var falloff = 0.2;
+let zOff = 0;
+let zIncrement = 0.000002; 
+let noiseOctaves = 1;
+let falloff = 0.2;
 
-var fr; // Framerate holder
+let fr; // Framerate holder
 
-var particles = [];
-var numberOfParticles = 1000;
+let particles = [];
+let numberOfParticles = 1000;
 
-var flowField = [];
-var flowFieldMag = 0.2; // Strength of flow field
-var isFlowfieldVisible;
-var isFlowfieldVisibleFromStart = false;
+let flowField = [];
+let flowFieldMag = 0.2; // Strength of flow field
+let isFlowfieldVisible;
+let isFlowfieldVisibleFromStart = false;
 
 // Flowfield globals for optimization purposes
 let v;
@@ -33,29 +33,31 @@ let dist;
 let flowfieldVectorColor; // For test drawing vector flowfield
 let desiredVectorColor; // For test drawing vector flowfield
 let desired;
+let isDesiredVectorsVisible;
+let isDesiredVectorsVisibleFromStart = false;
 
-var bgColor = 255;
-var alphaValue = 2;
+let bgColor = 255;
+let alphaValue = 2;
 
-var prevBgColor;
-var prevAlphaValue;
+let prevBgColor;
+let prevAlphaValue;
 
-var isFading;
+let isFading;
 
 // New pattern timer
-// var cycleTimeInMillis = 14*1000;
-var cycleTimeInMillis = 15*1000;
-var timerEndTime;
+// let cycleTimeInMillis = 14*1000;
+let cycleTimeInMillis = 15*1000;
+let timerEndTime;
 
 // Fade timer
-var fadeCycleInMillis = 5*1000;
-var fadeTimerEnd;
+let fadeCycleInMillis = 5*1000;
+let fadeTimerEnd;
 
-var fadeAlphaValue = 1;
-var fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
-var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
+let fadeAlphaValue = 1;
+let fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
+let bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
-var mouseMode = MouseModeEnum.ATTRACT;
+let mouseMode = MouseModeEnum.ATTRACT;
 const MAX_MOUSE_AFFECT_DIST = 150;
 let mouseAttractionscalar = 10;
 let maxMouseAffectForce = flowFieldMag * 1.2;
@@ -66,8 +68,6 @@ function setup() {
 		floor(window.innerHeight * windowScale)
 		// 500, 500
 		);
-
-	console.log('width: ' + width + ' height: ' + height);
 
 	// Set parent html element
 	canvas.parent('sketch-holder');
@@ -84,7 +84,8 @@ function setup() {
 	setTimer(cycleTimeInMillis);
 
 	isFlowfieldVisible = isFlowfieldVisibleFromStart;
-	flowfieldVectorColor = color(0, 0, 0);
+	flowfieldVectorColor = color(200, 200, 200);
+	isDesiredVectorsVisible = isDesiredVectorsVisibleFromStart;
 	desiredVectorColor = color(200, 50, 50, 5);
 }
 

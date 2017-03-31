@@ -1,7 +1,7 @@
 // (function() {
 // 	"use strict";
 
-	var MouseModeEnum = {
+	let MouseModeEnum = {
 		IGNORE: 'ignore',
 		ATTRACT: 'attract',
 		REPEL: 'repel'
