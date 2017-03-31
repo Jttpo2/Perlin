@@ -1,7 +1,8 @@
 // Perlin noise experiment
 
 var increment = 0.1;
-var scl = 20; 
+// var scl = 20; // How many columns/rows to split the width/height of the canvas in
+var scl = 20
 var cols, rows;
 
 // Perlin noise
@@ -17,6 +18,17 @@ numberOfParticles = 1000;
 
 var flowField = [];
 var flowFieldMag = 0.2; // Strength of flow field
+var isFlowfieldVisible;
+var isFlowfieldVisibleFromStart = false;
+
+// Flowfield globals for optimization purposes
+let v;
+let flowFieldVectorPos;
+let mousePos;
+let dist;
+let flowfieldVectorColor; // For test drawing vector flowfield
+let desiredVectorColor; // For test drawing vector flowfield
+let desired;
 
 var bgColor = 255;
 var alphaValue = 2;
@@ -28,7 +40,7 @@ var isFading;
 
 // New pattern timer
 // var cycleTimeInMillis = 14*1000;
-var cycleTimeInMillis = 13*1000;
+var cycleTimeInMillis = 15*1000;
 var timerEndTime;
 
 // Fade timer
@@ -39,7 +51,10 @@ var fadeAlphaValue = 1;
 var fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
 var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
-var mouseMode = MouseModeEnum.FREE;
+var mouseMode = MouseModeEnum.ATTRACT;
+const MAX_MOUSE_AFFECT_DIST = 150;
+let mouseAttractionscalar = 10;
+let maxMouseAffectForce = flowFieldMag * 1.2;
 
 function setup() {
 	let canvas = createCanvas(
@@ -53,9 +68,7 @@ function setup() {
 
 	background(bgColor);
 
-	cols = floor(width/scl);
-	rows = floor(height/scl);
-
+	// Framerate holder, <p> element
 	fr = createP('');
 
 	setupFlowfield();
@@ -63,6 +76,10 @@ function setup() {
 
 	// Start new pattern timer
 	setTimer(cycleTimeInMillis);
+
+	isFlowfieldVisible = isFlowfieldVisibleFromStart;
+	flowfieldVectorColor = color(0, 0, 0);
+	desiredVectorColor = color(200, 50, 50, 5);
 }
 
 function draw() {
@@ -71,30 +88,7 @@ function draw() {
 	updateFlowField();
 	updateParticles();
 	
-	if (!isFading && checkTimer()) {
-		setFadeTimer(fadeCycleInMillis);
-		fadeToWhite();
-	}
-
-	// if (isFading && checkFadeTimer()) {
-	// 	stopFading();
-
-	// 	reset();
-	// 	setTimer(cycleTimeInMillis);
-	// }
-	
-	if (isFading) {
-		if (isBackgroundHomogenic()) {
-			// Fading is complete
-			stopFading();
-			
-			reset();
-			setTimer(cycleTimeInMillis);
-		} else {
-			// Fade faster with time
-			accelerateFading();
-		}
-	}
+	handlePatternCycle();
 
 	// showFramerate();
 }
@@ -108,17 +102,51 @@ function updateFlowField() {
 		for (let x=0; x<cols; x++) {
 			let index = (x + y * cols);
 			let angle = noise(xOff, yOff, zOff) * TWO_PI*4;
-			let v = p5.Vector.fromAngle(angle);
+			v = p5.Vector.fromAngle(angle);
+			
 			v.setMag(random(flowFieldMag*0.9, flowFieldMag*1.1));
+
+			affectVectorByMouse(v, x, y);
+			
 			flowField[index] = v;
 
-			// drawVector(v, x, y); 
-			
+			if (isFlowfieldVisible) {
+				drawVector(v, x * scl, y * scl, flowfieldVectorColor); 
+			}
+
 			xOff += increment;
 		}
 		yOff += increment;
-
 		zOff += zIncrement;
+	}
+}
+
+// 'Bend' the flowfield with the mouse position
+function affectVectorByMouse(v, vectorPosX, vectorPosY) {
+	if (mouseMode == MouseModeEnum.FREE) {
+		return; // Do nothing
+	} else {
+		flowFieldVectorPos = createVector(vectorPosX * scl, vectorPosY * scl);
+		mousePos = createVector(mouseX, mouseY);
+		dist = mousePos.dist(flowFieldVectorPos);		
+
+		if (dist < MAX_MOUSE_AFFECT_DIST) {
+			// Within mouse affecting distance
+			if (mouseMode == MouseModeEnum.ATTRACT) {
+				desired = p5.Vector.sub(mousePos, flowFieldVectorPos);
+			} else if (mouseMode == MouseModeEnum.REPEL) {
+				desired = p5.Vector.sub(flowFieldVectorPos, mousePos);
+			}
+
+			desired.normalize();
+			desired.mult(mouseAttractionscalar);
+			desired.div(dist);
+			v.add(desired);
+			v.limit(maxMouseAffectForce);
+			if (isFlowfieldVisible) {
+				drawVector(desired, flowFieldVectorPos.x, flowFieldVectorPos.y, desiredVectorColor);
+			}
+		}
 	}
 }
 
@@ -132,72 +160,74 @@ function updateParticles() {
 }
 
 // Visualizes a (flow field) vector
-function drawVector(v, x, y) {
-	stroke(0, 50);
-			push();
-			translate(x * scl, y * scl);
-			rotate(v.heading());
-			strokeWeight(1);
-			line(0, 0, scl, 0);
+function drawVector(v, xPos, yPos, color) {
+	stroke(color, 50);
+	push();
+	translate(xPos, yPos);
+	rotate(v.heading());
+	strokeWeight(1);
+			// line(0, 0, scl, 0);
+			line(0, 0, v.mag()*100, 0);
 			pop();
-}
+		}
 
 // Keyboard input handler
 function keyReleased() {
 	switch (key) {
 		case ' ':
-			fadeToWhite();
-			console.log("Space");
-			break;
+		fadeToWhite();
+		console.log("Space");
+		break;
 		case 'A': 
-			zIncrement *= 1.30;
-			console.log('zIncrement: ' + zIncrement);
+		zIncrement *= 1.30;
+		console.log('zIncrement: ' + zIncrement);
 		break;
 		case 'Z': 
-			zIncrement /= 1.30;
-			console.log('zIncrement: ' + zIncrement);
+		zIncrement /= 1.30;
+		console.log('zIncrement: ' + zIncrement);
 		break;
 		case 'S': 
-			alphaValue *= 1.30;
-			console.log('alphaValue: ' + alphaValue);
+		alphaValue *= 1.30;
+		console.log('alphaValue: ' + alphaValue);
 		break;
 		case 'X': 
-			alphaValue /= 1.30;
-			console.log('alphaValue: ' + alphaValue);
+		alphaValue /= 1.30;
+		console.log('alphaValue: ' + alphaValue);
 		break;
 		case 'D': 
-			noiseOctaves += 1;
-			console.log('noiseOctaves: ' + noiseOctaves);
+		noiseOctaves += 1;
+		console.log('noiseOctaves: ' + noiseOctaves);
 		break;
 		case 'C': 
-			noiseOctaves -= 1;
-			console.log('noiseOctaves: ' + noiseOctaves);
+		noiseOctaves -= 1;
+		console.log('noiseOctaves: ' + noiseOctaves);
 		break;
 		case 'F': 
-			falloff *= 1.30;
-			console.log('falloff: ' + falloff);
+		falloff *= 1.30;
+		console.log('falloff: ' + falloff);
 		break;
 		case 'V': 
-			falloff /= 1.30;
-			console.log('falloff: ' + falloff);
+		falloff /= 1.30;
+		console.log('falloff: ' + falloff);
 		break;
 		case 'G':
-			flowFieldMag *=1.1;
-			console.log('flowFieldMag: ' + flowFieldMag);
+		flowFieldMag *=1.1;
+		console.log('flowFieldMag: ' + flowFieldMag);
 		break;
 		case 'B':
-			flowFieldMag /= 1.1;
-			console.log('flowFieldMag: ' + flowFieldMag);
-			break;
+		flowFieldMag /= 1.1;
+		console.log('flowFieldMag: ' + flowFieldMag);
+		break;
 		case 'H':
-			
-			console.log();
-			break;
+		console.log();
+		break;
 		case 'N':
-			
-			console.log();
-			break;
-
+		console.log();
+		break;
+		case 'Q': toggleFlowfield();
+		break;
+		case 'W': toggleMouseAttractRepel();
+		break;
 		default: console.log('wha?');
 	}
 }
@@ -254,7 +284,7 @@ function isBackgroundHomogenic() {
 				abs(pixels[index +1] - bgColor) > bgColorSpan ||
 				abs(pixels[index +2] - bgColor) > bgColorSpan) {
 				// abs(pixels[index +3] - bgColor) > bgColorSpan) { // Don't need to consider alpha
-				
+
 				// Pixel color is dissimilar to desired background
 				return false;
 			}
@@ -273,6 +303,8 @@ function isBackgroundHomogenic() {
 }
 
 function setupFlowfield() {
+	cols = floor(width/scl);
+	rows = floor(height/scl);
 	flowField = new Array(cols * rows);
 }
 
@@ -285,6 +317,27 @@ function createParticles() {
 // Displays framerate on screen
 function showFramerate() {
 	fr.html(floor(frameRate()));
+}
+
+// Handles the pattern show cycle and the fadeout between patterns 
+function handlePatternCycle() {
+	if (!isFading && checkTimer()) {
+		setFadeTimer(fadeCycleInMillis);
+		fadeToWhite();
+	}
+
+	if (isFading) {
+		if (isBackgroundHomogenic()) {
+			// Fading is complete
+			stopFading();
+			
+			reset();
+			setTimer(cycleTimeInMillis);
+		} else {
+			// Fade faster with time
+			accelerateFading();
+		}
+	}
 }
 
 // Sets new pattern timer
@@ -305,4 +358,18 @@ function checkTimer() {
 // Returns whether the fade timer has run out
 function checkFadeTimer() {
 	return fadeTimerEnd < millis();
+}
+
+function toggleFlowfield() {
+	isFlowfieldVisible = !isFlowfieldVisible;
+	console.log('flowfield visible: ' + isFlowfieldVisible);
+}
+
+function toggleMouseAttractRepel() {
+	if (mouseMode == MouseModeEnum.ATTRACT) {
+		mouseMode = MouseModeEnum.REPEL;
+	} else if (mouseMode == MouseModeEnum.REPEL) {
+		mouseMode = MouseModeEnum.ATTRACT;
+	}
+	console.log('mouse mode: ' + mouseMode);
 }
