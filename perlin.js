@@ -377,4 +377,12 @@ function toggleMouseAttractRepel() {
 	console.log('mouse mode: ' + mouseMode);
 }
 
+function windowResized() {
+	resizeCanvas(
+		window.innerWidth /2,
+		window.innerHeight /2
+		);
+	reset();
+}
+
 // })();
