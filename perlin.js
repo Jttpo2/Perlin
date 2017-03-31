@@ -5,11 +5,11 @@
 
 let windowScale = 0.7; // What portion of the window for the canvas to take up  
 
-let increment = 0.1;
 let scl = 20; // How many columns/rows to split the width/height of the canvas in
 let cols, rows; 
 
 // Perlin noise
+let increment = 0.1;
 let zOff = 0;
 let zIncrement = 0.000002; 
 let noiseOctaves = 1;
@@ -36,22 +36,19 @@ let desired;
 let isDesiredVectorsVisible;
 let isDesiredVectorsVisibleFromStart = false;
 
+// Background color and alpha value
 let bgColor = 255;
 let alphaValue = 2;
-
 let prevBgColor;
 let prevAlphaValue;
 
-let isFading;
+let isFading; // Fading in progress
 
-// New pattern timer
+// Pattern cycle timer
+// The pattern 'fades in' over this time amount
 // let cycleTimeInMillis = 14*1000;
 let cycleTimeInMillis = 15*1000;
 let timerEndTime;
-
-// Fade timer
-let fadeCycleInMillis = 5*1000;
-let fadeTimerEnd;
 
 let fadeAlphaValue = 1;
 let fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
@@ -329,7 +326,7 @@ function showFramerate() {
 // Handles the pattern show cycle and the fadeout between patterns 
 function handlePatternCycle() {
 	if (!isFading && checkTimer()) {
-		setFadeTimer(fadeCycleInMillis);
+		// setFadeTimer(fadeCycleInMillis);
 		fadeToWhite();
 	}
 
@@ -352,19 +349,9 @@ function setTimer(millisAhead) {
 	timerEndTime = millis() + millisAhead;
 }
 
-// Sets fade timer
-function setFadeTimer(millisAhead) {
-	fadeTimerEnd = millis() + millisAhead;
-}
-
 // Returns whether the new pattern timer has run out
 function checkTimer() {
 	return timerEndTime < millis();
-}
-
-// Returns whether the fade timer has run out
-function checkFadeTimer() {
-	return fadeTimerEnd < millis();
 }
 
 function toggleFlowfield() {
