@@ -21,22 +21,8 @@ let numberOfParticles = 1000;
 
 // Flowfield
 let scl = 50; // How many columns/rows to split the width/height of the canvas in
-let cols, rows; 
-let flowField = [];
-let flowFieldMag = 0.2; // Strength of flow field
-let isFlowfieldVisible;
-let isFlowfieldVisibleFromStart = false;
-
-// Flowfield globals for optimization purposes
-let v;
-let flowFieldVectorPos;
-let mousePos;
-let dist;
-let flowfieldVectorColor; // For test drawing vector flowfield
-let desiredVectorColor; // For test drawing vector flowfield
-let desired;
-let isDesiredVectorsVisible;
-let isDesiredVectorsVisibleFromStart = false;
+let flowfield;
+let flowfieldMag = 0.2; // Strength of flow field
 
 // Background color and alpha value
 let bgColor = 255;
@@ -55,12 +41,6 @@ let prevAlphaValue;
 let fadeAlphaValue = 1;
 let fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
 let bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
-
-// Mouse flowfield interaction
-let mouseMode = MouseModeEnum.ATTRACT;
-const MAX_MOUSE_AFFECT_DIST = 350;
-let mouseAttractionscalar = 10;
-let maxMouseAffectForce = flowFieldMag * 1.2;
 
 // P5 setup
 function setup() {
@@ -84,9 +64,7 @@ function setup() {
 	// Start new pattern timer
 	setTimer(cycleTimeInMillis);
 
-	isFlowfieldVisible = isFlowfieldVisibleFromStart;
 	flowfieldVectorColor = color(240, 240, 240, 10);
-	isDesiredVectorsVisible = isDesiredVectorsVisibleFromStart;
 	desiredVectorColor = color(200, 25, 25, 1);
 }
 
@@ -94,7 +72,7 @@ function setup() {
 function draw() {
 	background(bgColor, alphaValue);
 
-	updateFlowField();
+	flowfield.update();
 	updateParticles();
 	
 	handlePatternCycle();
@@ -102,85 +80,15 @@ function draw() {
 	// showFramerate();
 }
 
-// Updates all vectors in flowfield using 3D perlin noise (enabling change over time)
-function updateFlowField() {
-	let yOff = 0;
-
-	noiseDetail(noiseOctaves, falloff);
-	for (let y=0;y<rows; y++) {
-		let xOff = 0;
-		for (let x=0; x<cols; x++) {
-			let index = (x + y * cols);
-			let angle = noise(xOff, yOff, zOff) * TWO_PI*4;
-			v = p5.Vector.fromAngle(angle);
-			
-			v.setMag(random(flowFieldMag*0.9, flowFieldMag*1.1));
-
-			affectVectorByMouse(v, x, y);
-			
-			flowField[index] = v;
-
-			if (isFlowfieldVisible) {
-				drawVector(v, x * scl, y * scl, flowfieldVectorColor); 
-			}
-
-			xOff += increment;
-		}
-		yOff += increment;
-		zOff += zIncrement;
-	}
-}
-
-// 'Bend' the flowfield with the mouse position
-function affectVectorByMouse(v, vectorPosX, vectorPosY) {
-	if (mouseMode == MouseModeEnum.FREE) {
-		return; // Do nothing
-	} else {
-		flowFieldVectorPos = createVector(vectorPosX * scl, vectorPosY * scl);
-		mousePos = createVector(mouseX, mouseY);
-		dist = mousePos.dist(flowFieldVectorPos);		
-
-		if (dist < MAX_MOUSE_AFFECT_DIST) {
-			// Within mouse affecting distance
-			if (mouseMode == MouseModeEnum.ATTRACT) {
-				desired = p5.Vector.sub(mousePos, flowFieldVectorPos);
-			} else if (mouseMode == MouseModeEnum.REPEL) {
-				desired = p5.Vector.sub(flowFieldVectorPos, mousePos);
-			}
-
-			desired.normalize();
-			desired.mult(mouseAttractionscalar);
-			desired.div(dist);
-			v.add(desired);
-			v.limit(maxMouseAffectForce);
-			if (isDesiredVectorsVisible) {
-				drawVector(desired, flowFieldVectorPos.x, flowFieldVectorPos.y, desiredVectorColor);
-			}
-		}
-	}
-}
-
 // Affect particles by flowfield and move them
 function updateParticles() {
 	for (let i=0; i<particles.length; i++) {
-		particles[i].follow(flowField);
+		particles[i].follow(flowfield);
 		particles[i].update();
 		particles[i].show();
 		particles[i].edges();
 	}
 }
-
-// Visualizes a (flow field) vector
-function drawVector(v, xPos, yPos, color) {
-	stroke(color, 50);
-	push();
-	translate(xPos, yPos);
-	rotate(v.heading());
-	strokeWeight(1);
-			// line(0, 0, scl, 0);
-			line(0, 0, v.mag()*50, 0);
-			pop();
-		}
 
 // Keyboard input handler
 function keyReleased() {
@@ -222,12 +130,12 @@ function keyReleased() {
 		console.log('falloff: ' + falloff);
 		break;
 		case 'G':
-		flowFieldMag *=1.1;
-		console.log('flowFieldMag: ' + flowFieldMag);
+		flowfieldMag *=1.1;
+		console.log('flowfieldMag: ' + flowfieldMag);
 		break;
 		case 'B':
-		flowFieldMag /= 1.1;
-		console.log('flowFieldMag: ' + flowFieldMag);
+		flowfieldMag /= 1.1;
+		console.log('flowfieldMag: ' + flowfieldMag);
 		break;
 		case 'H':
 		console.log();
@@ -235,11 +143,11 @@ function keyReleased() {
 		case 'N':
 		console.log();
 		break;
-		case 'Q': toggleFlowfield();
+		case 'Q': flowfield.toggleVisibilitty();
 		break;
-		case 'W': toggleDesiredVectors();
+		case 'W': flowfield.toggleDesiredVectors();
 		break;
-		case 'R': toggleMouseAttractRepel();
+		case 'R': flowfield.toggleMouseAttractRepel();
 		break;
 		default: console.log('wha?');
 	}
@@ -254,6 +162,18 @@ function reset() {
 
 	setupFlowfield();
 	createParticles();
+}
+
+function setupFlowfield() {
+	flowfield = new Flowfield(scl, flowfieldMag);
+}
+
+// Creates an array of particles to push around the screen by the flowfield
+function createParticles() {
+	for (let i=0; i<numberOfParticles; i++) {
+		let col = color(randomGaussian(110, 20), 2);
+		particles[i] = new Particle(col);	
+	}
 }
 
 // Fade sketch into background through additive blending
@@ -317,21 +237,6 @@ function isBackgroundHomogenic() {
 	// }
 }
 
-// Initiate flowfield
-function setupFlowfield() {
-	cols = floor(width/scl);
-	rows = floor(height/scl);
-	flowField = new Array(cols * rows);
-}
-
-// Creates an array of particles to push around the screen by the flowfield
-function createParticles() {
-	for (let i=0; i<numberOfParticles; i++) {
-		let col = color(randomGaussian(110, 20), 2);
-		particles[i] = new Particle(col);	
-	}
-}
-
 // Displays framerate on screen
 function showFramerate() {
 	fr.html(floor(frameRate()));
@@ -366,28 +271,6 @@ function setTimer(millisAhead) {
 // Returns whether the new pattern timer has run out
 function checkTimer() {
 	return timerEndTime < millis();
-}
-
-// Toggle flowfield visibility
-function toggleFlowfield() {
-	isFlowfieldVisible = !isFlowfieldVisible;
-	console.log('flowfield visible: ' + isFlowfieldVisible);
-}
-
-// Toggle desired vectors visibility
-function toggleDesiredVectors() {
-	isDesiredVectorsVisible = !isDesiredVectorsVisible;
-	console.log('desired vectors visible: ' + isDesiredVectorsVisible);
-}
-
-// Switch between attraction and repulsion modes
-function toggleMouseAttractRepel() {
-	if (mouseMode == MouseModeEnum.ATTRACT) {
-		mouseMode = MouseModeEnum.REPEL;
-	} else if (mouseMode == MouseModeEnum.REPEL) {
-		mouseMode = MouseModeEnum.ATTRACT;
-	}
-	console.log('mouse mode: ' + mouseMode);
 }
 
 // P5 hook function for window resizing
