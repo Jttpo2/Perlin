@@ -1,6 +1,6 @@
 var MouseModeEnum = {
-	FREE: 'free',
-	FOLLOW: 'follow',
+	IGNORE: 'ignore',
+	ATTRACT: 'attract',
 	REPEL: 'repel'
 }
 

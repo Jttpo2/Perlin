@@ -1,7 +1,7 @@
 // Perlin noise experiment
 
 var increment = 0.1;
-var scl = 20; 
+var scl = 20; // How many columns/rows to split the width/height of the canvas in
 var cols, rows;
 
 // Perlin noise
@@ -39,7 +39,7 @@ var fadeAlphaValue = 1;
 var fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
 var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
-var mouseMode = MouseModeEnum.FREE;
+var mouseMode = MouseModeEnum.ATTRACT;
 
 function setup() {
 	let canvas = createCanvas(
@@ -52,9 +52,6 @@ function setup() {
 	canvas.parent('sketch-holder');
 
 	background(bgColor);
-
-	cols = floor(width/scl);
-	rows = floor(height/scl);
 
 	fr = createP('');
 
@@ -112,7 +109,21 @@ function updateFlowField() {
 			v.setMag(random(flowFieldMag*0.9, flowFieldMag*1.1));
 			flowField[index] = v;
 
-			// drawVector(v, x, y); 
+			if (mouseMode == MouseModeEnum.ATTRACT) {
+				let flowFieldVectorPos = createVector(x * scl, y * scl);
+				let mousePos = createVector(mouseX, mouseY);
+
+				const allowedDistance = 50;
+				let dist = mousePos.dist(flowFieldVectorPos);
+
+				if (dist < allowedDistance) {
+					// Within mouse affecting distance
+					let desired = p5.Vector.sub(mousePos, flowFieldVectorPos);
+					v = desired;
+				}
+			}
+
+			drawVector(v, x, y); 
 			
 			xOff += increment;
 		}
@@ -273,6 +284,8 @@ function isBackgroundHomogenic() {
 }
 
 function setupFlowfield() {
+	cols = floor(width/scl);
+	rows = floor(height/scl);
 	flowField = new Array(cols * rows);
 }
 
