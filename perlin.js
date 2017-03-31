@@ -5,9 +5,6 @@
 
 let windowScale = 0.7; // What portion of the window for the canvas to take up  
 
-let scl = 20; // How many columns/rows to split the width/height of the canvas in
-let cols, rows; 
-
 // Perlin noise
 let increment = 0.1;
 let zOff = 0;
@@ -15,11 +12,16 @@ let zIncrement = 0.000002;
 let noiseOctaves = 1;
 let falloff = 0.2;
 
-let fr; // Framerate holder
+// Framerate html holder
+let fr; 
 
+// Particles
 let particles = [];
 let numberOfParticles = 1000;
 
+// Flowfield
+let scl = 20; // How many columns/rows to split the width/height of the canvas in
+let cols, rows; 
 let flowField = [];
 let flowFieldMag = 0.2; // Strength of flow field
 let isFlowfieldVisible;
@@ -39,10 +41,6 @@ let isDesiredVectorsVisibleFromStart = false;
 // Background color and alpha value
 let bgColor = 255;
 let alphaValue = 2;
-let prevBgColor;
-let prevAlphaValue;
-
-let isFading; // Fading in progress
 
 // Pattern cycle timer
 // The pattern 'fades in' over this time amount
@@ -50,15 +48,21 @@ let isFading; // Fading in progress
 let cycleTimeInMillis = 15*1000;
 let timerEndTime;
 
+// Fadeout
+let isFading; // Fading in progress
+let prevBgColor;
+let prevAlphaValue;
 let fadeAlphaValue = 1;
 let fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
 let bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
+// Mouse flowfield interaction
 let mouseMode = MouseModeEnum.ATTRACT;
 const MAX_MOUSE_AFFECT_DIST = 150;
 let mouseAttractionscalar = 10;
 let maxMouseAffectForce = flowFieldMag * 1.2;
 
+// P5 setup
 function setup() {
 	let canvas = createCanvas(
 		floor(window.innerWidth * windowScale),
@@ -81,11 +85,12 @@ function setup() {
 	setTimer(cycleTimeInMillis);
 
 	isFlowfieldVisible = isFlowfieldVisibleFromStart;
-	flowfieldVectorColor = color(200, 200, 200);
+	flowfieldVectorColor = color(240, 240, 240, 10);
 	isDesiredVectorsVisible = isDesiredVectorsVisibleFromStart;
-	desiredVectorColor = color(200, 50, 50, 5);
+	desiredVectorColor = color(200, 25, 25, 1);
 }
 
+// P5 draw 
 function draw() {
 	background(bgColor, alphaValue);
 
@@ -97,6 +102,7 @@ function draw() {
 	// showFramerate();
 }
 
+// Updates all vectors in flowfield using 3D perlin noise (enabling change over time)
 function updateFlowField() {
 	let yOff = 0;
 
@@ -147,13 +153,14 @@ function affectVectorByMouse(v, vectorPosX, vectorPosY) {
 			desired.div(dist);
 			v.add(desired);
 			v.limit(maxMouseAffectForce);
-			if (isFlowfieldVisible) {
+			if (isDesiredVectorsVisible) {
 				drawVector(desired, flowFieldVectorPos.x, flowFieldVectorPos.y, desiredVectorColor);
 			}
 		}
 	}
 }
 
+// Affect particles by flowfield and move them
 function updateParticles() {
 	for (let i=0; i<particles.length; i++) {
 		particles[i].follow(flowField);
@@ -171,7 +178,7 @@ function drawVector(v, xPos, yPos, color) {
 	rotate(v.heading());
 	strokeWeight(1);
 			// line(0, 0, scl, 0);
-			line(0, 0, v.mag()*100, 0);
+			line(0, 0, v.mag()*50, 0);
 			pop();
 		}
 
@@ -230,7 +237,9 @@ function keyReleased() {
 		break;
 		case 'Q': toggleFlowfield();
 		break;
-		case 'W': toggleMouseAttractRepel();
+		case 'W': toggleDesiredVectors();
+		break;
+		case 'R': toggleMouseAttractRepel();
 		break;
 		default: console.log('wha?');
 	}
@@ -247,6 +256,7 @@ function reset() {
 	createParticles();
 }
 
+// Fade sketch into background through additive blending
 function fadeToWhite() {
 	prevBgColor = bgColor;
 	prevAlphaValue = alphaValue;
@@ -258,6 +268,7 @@ function fadeToWhite() {
 	isFading = true;
 }
 
+// Return to normal blend mode
 function stopFading() {
 	bgColor = prevBgColor;
 	alphaValue = prevAlphaValue;
@@ -306,12 +317,14 @@ function isBackgroundHomogenic() {
 	// }
 }
 
+// Initiate flowfield
 function setupFlowfield() {
 	cols = floor(width/scl);
 	rows = floor(height/scl);
 	flowField = new Array(cols * rows);
 }
 
+// Creates an array of particles to push around the screen by the flowfield
 function createParticles() {
 	for (let i=0; i<numberOfParticles; i++) {
 		particles[i] = new Particle();	
@@ -354,11 +367,19 @@ function checkTimer() {
 	return timerEndTime < millis();
 }
 
+// Toggle flowfield visibility
 function toggleFlowfield() {
 	isFlowfieldVisible = !isFlowfieldVisible;
 	console.log('flowfield visible: ' + isFlowfieldVisible);
 }
 
+// Toggle desired vectors visibility
+function toggleDesiredVectors() {
+	isDesiredVectorsVisible = !isDesiredVectorsVisible;
+	console.log('desired vectors visible: ' + isDesiredVectorsVisible);
+}
+
+// Switch between attraction and repulsion modes
 function toggleMouseAttractRepel() {
 	if (mouseMode == MouseModeEnum.ATTRACT) {
 		mouseMode = MouseModeEnum.REPEL;
@@ -368,6 +389,7 @@ function toggleMouseAttractRepel() {
 	console.log('mouse mode: ' + mouseMode);
 }
 
+// P5 hook function for window resizing
 function windowResized() {
 	resizeCanvas(
 		floor(window.innerWidth * windowScale),
