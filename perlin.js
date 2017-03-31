@@ -128,31 +128,8 @@ function updateFlowField() {
 			
 			v.setMag(random(flowFieldMag*0.9, flowFieldMag*1.1));
 
-
-			if (mouseMode != MouseModeEnum.FREE) {
-				flowFieldVectorPos = createVector(x * scl, y * scl);
-				mousePos = createVector(mouseX, mouseY);
-				dist = mousePos.dist(flowFieldVectorPos);		
-				
-				if (dist < MAX_MOUSE_AFFECT_DIST) {
-					// Within mouse affecting distance
-					if (mouseMode == MouseModeEnum.ATTRACT) {
-						desired = p5.Vector.sub(mousePos, flowFieldVectorPos);
-					} else if (mouseMode == MouseModeEnum.REPEL) {
-						desired = p5.Vector.sub(flowFieldVectorPos, mousePos);
-					}
-
-					desired.normalize();
-					desired.mult(mouseAttractionscalar);
-					desired.div(dist);
-					// desired.limit(maxMouseAffectForce);			
-					v.add(desired);
-					v.limit(maxMouseAffectForce);
-					if (isFlowfieldVisible) {
-						drawVector(desired, flowFieldVectorPos.x, flowFieldVectorPos.y, desiredVectorColor);
-					}
-				}
-			}
+			affectVectorByMouse(v, x, y);
+			
 			flowField[index] = v;
 
 			if (isFlowfieldVisible) {
@@ -164,6 +141,36 @@ function updateFlowField() {
 		yOff += increment;
 
 		zOff += zIncrement;
+	}
+}
+
+// 'Bend' the flowfield with the mouse position
+function affectVectorByMouse(v, vectorPosX, vectorPosY) {
+	if (mouseMode == MouseModeEnum.FREE) {
+		return; // Do nothing
+	} else {
+		flowFieldVectorPos = createVector(vectorPosX * scl, vectorPosY * scl);
+		mousePos = createVector(mouseX, mouseY);
+		dist = mousePos.dist(flowFieldVectorPos);		
+
+		if (dist < MAX_MOUSE_AFFECT_DIST) {
+			// Within mouse affecting distance
+			if (mouseMode == MouseModeEnum.ATTRACT) {
+				desired = p5.Vector.sub(mousePos, flowFieldVectorPos);
+			} else if (mouseMode == MouseModeEnum.REPEL) {
+				desired = p5.Vector.sub(flowFieldVectorPos, mousePos);
+			}
+
+			desired.normalize();
+			desired.mult(mouseAttractionscalar);
+			desired.div(dist);
+			// desired.limit(maxMouseAffectForce);			
+			v.add(desired);
+			v.limit(maxMouseAffectForce);
+			if (isFlowfieldVisible) {
+				drawVector(desired, flowFieldVectorPos.x, flowFieldVectorPos.y, desiredVectorColor);
+			}
+		}
 	}
 }
 
@@ -179,74 +186,74 @@ function updateParticles() {
 // Visualizes a (flow field) vector
 function drawVector(v, xPos, yPos, color) {
 	stroke(color, 50);
-			push();
-			translate(xPos, yPos);
-			rotate(v.heading());
-			strokeWeight(1);
+	push();
+	translate(xPos, yPos);
+	rotate(v.heading());
+	strokeWeight(1);
 			// line(0, 0, scl, 0);
 			line(0, 0, v.mag()*100, 0);
 			pop();
-}
+		}
 
 // Keyboard input handler
 function keyReleased() {
 	switch (key) {
 		case ' ':
-			fadeToWhite();
-			console.log("Space");
-			break;
+		fadeToWhite();
+		console.log("Space");
+		break;
 		case 'A': 
-			zIncrement *= 1.30;
-			console.log('zIncrement: ' + zIncrement);
+		zIncrement *= 1.30;
+		console.log('zIncrement: ' + zIncrement);
 		break;
 		case 'Z': 
-			zIncrement /= 1.30;
-			console.log('zIncrement: ' + zIncrement);
+		zIncrement /= 1.30;
+		console.log('zIncrement: ' + zIncrement);
 		break;
 		case 'S': 
-			alphaValue *= 1.30;
-			console.log('alphaValue: ' + alphaValue);
+		alphaValue *= 1.30;
+		console.log('alphaValue: ' + alphaValue);
 		break;
 		case 'X': 
-			alphaValue /= 1.30;
-			console.log('alphaValue: ' + alphaValue);
+		alphaValue /= 1.30;
+		console.log('alphaValue: ' + alphaValue);
 		break;
 		case 'D': 
-			noiseOctaves += 1;
-			console.log('noiseOctaves: ' + noiseOctaves);
+		noiseOctaves += 1;
+		console.log('noiseOctaves: ' + noiseOctaves);
 		break;
 		case 'C': 
-			noiseOctaves -= 1;
-			console.log('noiseOctaves: ' + noiseOctaves);
+		noiseOctaves -= 1;
+		console.log('noiseOctaves: ' + noiseOctaves);
 		break;
 		case 'F': 
-			falloff *= 1.30;
-			console.log('falloff: ' + falloff);
+		falloff *= 1.30;
+		console.log('falloff: ' + falloff);
 		break;
 		case 'V': 
-			falloff /= 1.30;
-			console.log('falloff: ' + falloff);
+		falloff /= 1.30;
+		console.log('falloff: ' + falloff);
 		break;
 		case 'G':
-			flowFieldMag *=1.1;
-			console.log('flowFieldMag: ' + flowFieldMag);
+		flowFieldMag *=1.1;
+		console.log('flowFieldMag: ' + flowFieldMag);
 		break;
 		case 'B':
-			flowFieldMag /= 1.1;
-			console.log('flowFieldMag: ' + flowFieldMag);
-			break;
+		flowFieldMag /= 1.1;
+		console.log('flowFieldMag: ' + flowFieldMag);
+		break;
 		case 'H':
-			
-			console.log();
-			break;
+
+		console.log();
+		break;
 		case 'N':
-			
-			console.log();
-			break;
+
+		console.log();
+		break;
 		case 'Q': toggleFlowfield();
-			break;
+		break;
 		case 'W': toggleMouseAttractRepel();
-			break;
+		break;
 		default: console.log('wha?');
 	}
 }
@@ -303,7 +310,7 @@ function isBackgroundHomogenic() {
 				abs(pixels[index +1] - bgColor) > bgColorSpan ||
 				abs(pixels[index +2] - bgColor) > bgColorSpan) {
 				// abs(pixels[index +3] - bgColor) > bgColorSpan) { // Don't need to consider alpha
-				
+
 				// Pixel color is dissimilar to desired background
 				return false;
 			}
