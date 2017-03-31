@@ -1,10 +1,7 @@
 (function() {
 	"use strict";
 
-
-
-
-// Perlin noise experiment
+// Visual perlin noise experiment
 
 var increment = 0.1;
 // var scl = 20; // How many columns/rows to split the width/height of the canvas in
