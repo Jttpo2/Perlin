@@ -1,9 +1,12 @@
-// Perlin noise experiment
+(function() {
+	"use strict";
+
+// Visual perlin noise experiment
 
 var increment = 0.1;
 // var scl = 20; // How many columns/rows to split the width/height of the canvas in
-var scl = 20
-var cols, rows;
+var scl = 20;
+var cols, rows; 
 
 // Perlin noise
 var zOff = 0;
@@ -273,7 +276,7 @@ function isBackgroundHomogenic() {
 	loadPixels();
 
 	// Consider a range around the desired color acceptable
-	let bgColorDiff = abs(bgColorSpan - bgColor)
+	let bgColorDiff = abs(bgColorSpan - bgColor);
 
 	let index = 0;
 	for (let x=0; x<width; x++) {
@@ -373,3 +376,5 @@ function toggleMouseAttractRepel() {
 	}
 	console.log('mouse mode: ' + mouseMode);
 }
+
+})();
