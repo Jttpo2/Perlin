@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Jttpo2/Perlin/issues"
   },
-  "homepage": "https://github.com/Jttpo2/Perlin#readme"
+  "homepage": "https://github.com/Jttpo2/Perlin#readme",
+  "jshintConfig": {
+    "esversion": 6
+  }
 }
