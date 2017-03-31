@@ -26,8 +26,8 @@ let v;
 let flowFieldVectorPos;
 let mousePos;
 let dist;
-let flowfieldVectorColor;
-let desiredVectorColor;
+let flowfieldVectorColor; // For test drawing vector flowfield
+let desiredVectorColor; // For test drawing vector flowfield
 let desired;
 
 var bgColor = 255;
@@ -68,6 +68,7 @@ function setup() {
 
 	background(bgColor);
 
+	// Framerate holder, <p> element
 	fr = createP('');
 
 	setupFlowfield();
@@ -87,30 +88,7 @@ function draw() {
 	updateFlowField();
 	updateParticles();
 	
-	if (!isFading && checkTimer()) {
-		setFadeTimer(fadeCycleInMillis);
-		fadeToWhite();
-	}
-
-	// if (isFading && checkFadeTimer()) {
-	// 	stopFading();
-
-	// 	reset();
-	// 	setTimer(cycleTimeInMillis);
-	// }
-	
-	if (isFading) {
-		if (isBackgroundHomogenic()) {
-			// Fading is complete
-			stopFading();
-			
-			reset();
-			setTimer(cycleTimeInMillis);
-		} else {
-			// Fade faster with time
-			accelerateFading();
-		}
-	}
+	handlePatternCycle();
 
 	// showFramerate();
 }
@@ -135,11 +113,10 @@ function updateFlowField() {
 			if (isFlowfieldVisible) {
 				drawVector(v, x * scl, y * scl, flowfieldVectorColor); 
 			}
-			
+
 			xOff += increment;
 		}
 		yOff += increment;
-
 		zOff += zIncrement;
 	}
 }
@@ -164,7 +141,6 @@ function affectVectorByMouse(v, vectorPosX, vectorPosY) {
 			desired.normalize();
 			desired.mult(mouseAttractionscalar);
 			desired.div(dist);
-			// desired.limit(maxMouseAffectForce);			
 			v.add(desired);
 			v.limit(maxMouseAffectForce);
 			if (isFlowfieldVisible) {
@@ -243,11 +219,9 @@ function keyReleased() {
 		console.log('flowFieldMag: ' + flowFieldMag);
 		break;
 		case 'H':
-
 		console.log();
 		break;
 		case 'N':
-
 		console.log();
 		break;
 		case 'Q': toggleFlowfield();
@@ -343,6 +317,27 @@ function createParticles() {
 // Displays framerate on screen
 function showFramerate() {
 	fr.html(floor(frameRate()));
+}
+
+// Handles the pattern show cycle and the fadeout between patterns 
+function handlePatternCycle() {
+	if (!isFading && checkTimer()) {
+		setFadeTimer(fadeCycleInMillis);
+		fadeToWhite();
+	}
+
+	if (isFading) {
+		if (isBackgroundHomogenic()) {
+			// Fading is complete
+			stopFading();
+			
+			reset();
+			setTimer(cycleTimeInMillis);
+		} else {
+			// Fade faster with time
+			accelerateFading();
+		}
+	}
 }
 
 // Sets new pattern timer
