@@ -16,8 +16,8 @@ var falloff = 0.2;
 
 var fr; // Framerate holder
 
-particles = [];
-numberOfParticles = 1000;
+var particles = [];
+var numberOfParticles = 1000;
 
 var flowField = [];
 var flowFieldMag = 0.2; // Strength of flow field
