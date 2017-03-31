@@ -1,5 +1,5 @@
-(function() {
-	"use strict";
+// (function() {
+// 	"use strict";
 
 // Visual perlin noise experiment
 
@@ -377,4 +377,4 @@ function toggleMouseAttractRepel() {
 	console.log('mouse mode: ' + mouseMode);
 }
 
-})();
+// })();

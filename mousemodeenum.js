@@ -1,5 +1,5 @@
-(function() {
-	"use strict";
+// (function() {
+// 	"use strict";
 
 	var MouseModeEnum = {
 		IGNORE: 'ignore',
@@ -14,4 +14,4 @@
 	Object.seal(MouseModeEnum);
 	// console.log('MouseModeEnum isSealed: ' + Object.isSealed(MouseModeEnum));
 
-})();
+// })();

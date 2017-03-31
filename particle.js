@@ -1,5 +1,5 @@
-(function() {
-	"use strict";
+// (function() {
+// 	"use strict";
 
 	function Particle() {
 		this.pos = createVector(random(width), random(height));
@@ -64,4 +64,4 @@
 	};
 }
 
-})();
+// })();
