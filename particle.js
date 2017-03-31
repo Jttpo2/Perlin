@@ -1,14 +1,14 @@
 // (function() {
 // 	"use strict";
 
-	function Particle() {
+	function Particle(col) {
 		this.pos = createVector(random(width), random(height));
 		this.vel = createVector(0, 0); //p5.Vector.random2D();
 		this.acc = createVector(0, 0);
 		this.maxSpeed = 4;
 		this.size = 1;
-		this.color = 110;
-		this.alpha = 1;
+		this.color = col;
+		// this.alpha = 1;
 		this.previous = this.pos.copy();
 
 		this.update = function() {
@@ -25,7 +25,8 @@
 		};
 
 		this.show = function() {
-			stroke(this.color, this.alpha);
+			// stroke(this.color, this.alpha);
+			stroke(this.color);
 			strokeWeight(this.size);
 		// point (this.pos.x, this.pos.y);
 		line(this.previous.x, this.previous.y, this.pos.x, this.pos.y);

@@ -20,7 +20,7 @@ let particles = [];
 let numberOfParticles = 1000;
 
 // Flowfield
-let scl = 20; // How many columns/rows to split the width/height of the canvas in
+let scl = 50; // How many columns/rows to split the width/height of the canvas in
 let cols, rows; 
 let flowField = [];
 let flowFieldMag = 0.2; // Strength of flow field
@@ -58,7 +58,7 @@ let bgColorSpan = 2; // Tolerance threshold level for when the fade should consi
 
 // Mouse flowfield interaction
 let mouseMode = MouseModeEnum.ATTRACT;
-const MAX_MOUSE_AFFECT_DIST = 150;
+const MAX_MOUSE_AFFECT_DIST = 350;
 let mouseAttractionscalar = 10;
 let maxMouseAffectForce = flowFieldMag * 1.2;
 
@@ -327,7 +327,8 @@ function setupFlowfield() {
 // Creates an array of particles to push around the screen by the flowfield
 function createParticles() {
 	for (let i=0; i<numberOfParticles; i++) {
-		particles[i] = new Particle();	
+		let col = color(randomGaussian(110, 20), 2);
+		particles[i] = new Particle(col);	
 	}
 }
 
