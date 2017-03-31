@@ -3,9 +3,10 @@
 
 // Visual perlin noise experiment
 
+var windowScale = 0.75; // What portion of the window for the canvas to take up  
+
 var increment = 0.1;
-// var scl = 20; // How many columns/rows to split the width/height of the canvas in
-var scl = 20;
+var scl = 20; // How many columns/rows to split the width/height of the canvas in
 var cols, rows; 
 
 // Perlin noise
@@ -61,10 +62,12 @@ let maxMouseAffectForce = flowFieldMag * 1.2;
 
 function setup() {
 	let canvas = createCanvas(
-		window.innerWidth /2,
-		window.innerHeight /2
+		floor(window.innerWidth * windowScale),
+		floor(window.innerHeight * windowScale)
 		// 500, 500
 		);
+
+	console.log('width: ' + width + ' height: ' + height);
 
 	// Set parent html element
 	canvas.parent('sketch-holder');
@@ -379,8 +382,8 @@ function toggleMouseAttractRepel() {
 
 function windowResized() {
 	resizeCanvas(
-		window.innerWidth /2,
-		window.innerHeight /2
+		floor(window.innerWidth * windowScale),
+		floor(window.innerHeight * windowScale)
 		);
 	reset();
 }
