@@ -39,6 +39,8 @@ var fadeAlphaValue = 1;
 var fadeAlphaValueTemp; // To be able to accelerate fading speed with time (so intensely black parts dissapear quicker)
 var bgColorSpan = 2; // Tolerance threshold level for when the fade should consider pixels to be equal to background
 
+var mouseMode = MouseModeEnum.FREE;
+
 function setup() {
 	let canvas = createCanvas(
 		window.innerWidth /2,
