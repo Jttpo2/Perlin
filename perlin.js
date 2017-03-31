@@ -1,11 +1,12 @@
-(function() {
-	"use strict";
+// (function() {
+// 	"use strict";
 
 // Visual perlin noise experiment
 
+var windowScale = 0.75; // What portion of the window for the canvas to take up  
+
 var increment = 0.1;
-// var scl = 20; // How many columns/rows to split the width/height of the canvas in
-var scl = 20;
+var scl = 20; // How many columns/rows to split the width/height of the canvas in
 var cols, rows; 
 
 // Perlin noise
@@ -16,8 +17,8 @@ var falloff = 0.2;
 
 var fr; // Framerate holder
 
-particles = [];
-numberOfParticles = 1000;
+var particles = [];
+var numberOfParticles = 1000;
 
 var flowField = [];
 var flowFieldMag = 0.2; // Strength of flow field
@@ -61,10 +62,12 @@ let maxMouseAffectForce = flowFieldMag * 1.2;
 
 function setup() {
 	let canvas = createCanvas(
-		window.innerWidth /2,
-		window.innerHeight /2
+		floor(window.innerWidth * windowScale),
+		floor(window.innerHeight * windowScale)
 		// 500, 500
 		);
+
+	console.log('width: ' + width + ' height: ' + height);
 
 	// Set parent html element
 	canvas.parent('sketch-holder');
@@ -377,4 +380,12 @@ function toggleMouseAttractRepel() {
 	console.log('mouse mode: ' + mouseMode);
 }
 
-})();
+function windowResized() {
+	resizeCanvas(
+		floor(window.innerWidth * windowScale),
+		floor(window.innerHeight * windowScale)
+		);
+	reset();
+}
+
+// })();
