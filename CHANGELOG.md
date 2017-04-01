@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 ### Changed
 - var -> let
+- Lots of refactoring
 
 ### Added
 - Canvas resizes with window. Also resets with resize.
