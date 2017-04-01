@@ -2,7 +2,6 @@
 const MAX_MOUSE_AFFECT_DIST = 350;
 let mouseAttractionscalar = 10;
 
-
 // Flowfield globals for optimization purposes
 let v;
 let flowfieldVectorPos;
@@ -22,9 +21,6 @@ function Flowfield(scl, flowfieldMagnitude) {
 
 	this.flowfieldMag = flowfieldMagnitude;
 	this.maxMouseAffectForce = this.flowfieldMag * 1.2;
-
-	this.isFlowfieldVisible = isFlowfieldVisibleFromStart;
-	this.isDesiredVectorsVisible = isDesiredVectorsVisibleFromStart;
 
 	this.mouseMode = MouseModeEnum.ATTRACT;
 
@@ -46,7 +42,7 @@ function Flowfield(scl, flowfieldMagnitude) {
 
 				this.vectors[index] = v;
 
-				if (this.isFlowfieldVisible) {
+				if (isFlowfieldVisible) {
 					this.drawVector(v, x * this.scl, y * this.scl, flowfieldVectorColor); 
 				}
 
@@ -79,7 +75,7 @@ function Flowfield(scl, flowfieldMagnitude) {
 				desired.div(dist);
 				v.add(desired);
 				v.limit(this.maxMouseAffectForce);
-				if (this.isDesiredVectorsVisible) {
+				if (isDesiredVectorsVisible) {
 					this.drawVector(desired, flowfieldVectorPos.x, flowfieldVectorPos.y, desiredVectorColor);
 				}
 			}
@@ -100,14 +96,14 @@ function Flowfield(scl, flowfieldMagnitude) {
 
 	// Toggle flowfield visibility
 	this.toggleVisibility = function() {
-		this.isFlowfieldVisible = !this.isFlowfieldVisible;
-		console.log('flowfield visible: ' + this.isFlowfieldVisible);
+		isFlowfieldVisible = !this.isFlowfieldVisible;
+		console.log('flowfield visible: ' + isFlowfieldVisible);
 	};
 
 	// Toggle desired vectors visibility
 	this.toggleDesiredVectors = function() {
-		this.isDesiredVectorsVisible = !this.isDesiredVectorsVisible;
-		console.log('desired vectors visible: ' + this.isDesiredVectorsVisible);
+		isDesiredVectorsVisible = !isDesiredVectorsVisible;
+		console.log('desired vectors visible: ' + isDesiredVectorsVisible);
 	};
 
 	// Switch between attraction and repulsion modes

@@ -23,6 +23,8 @@ let numberOfParticles = 1000;
 let scl = 20; // How many columns/rows to split the width/height of the canvas in
 let flowfield;
 let flowfieldMag = 0.2; // Strength of flow field
+let isFlowfieldVisible = isFlowfieldVisibleFromStart;
+let isDesiredVectorsVisible = isDesiredVectorsVisibleFromStart;
 
 // Background color and alpha value
 let bgColor = 255;
