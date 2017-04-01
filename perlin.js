@@ -15,12 +15,12 @@ let falloff = 0.2;
 // Framerate html holder
 let fr; 
 
-// Particles
-let particles = [];
+// Pattern
+let pattern;
 let numberOfParticles = 1000;
 
 // Flowfield
-let scl = 50; // How many columns/rows to split the width/height of the canvas in
+let scl = 20; // How many columns/rows to split the width/height of the canvas in
 let flowfield;
 let flowfieldMag = 0.2; // Strength of flow field
 
@@ -59,7 +59,7 @@ function setup() {
 	fr = createP('');
 
 	setupFlowfield();
-	createParticles();
+	createPattern();
 
 	// Start new pattern timer
 	setTimer(cycleTimeInMillis);
@@ -73,21 +73,11 @@ function draw() {
 	background(bgColor, alphaValue);
 
 	flowfield.update();
-	updateParticles();
+	pattern.update(flowfield);
 	
 	handlePatternCycle();
 
 	// showFramerate();
-}
-
-// Affect particles by flowfield and move them
-function updateParticles() {
-	for (let i=0; i<particles.length; i++) {
-		particles[i].follow(flowfield);
-		particles[i].update();
-		particles[i].show();
-		particles[i].edges();
-	}
 }
 
 // Keyboard input handler
@@ -143,7 +133,7 @@ function keyReleased() {
 		case 'N':
 		console.log();
 		break;
-		case 'Q': flowfield.toggleVisibilitty();
+		case 'Q': flowfield.toggleVisibility();
 		break;
 		case 'W': flowfield.toggleDesiredVectors();
 		break;
@@ -158,22 +148,18 @@ function reset() {
 	background(bgColor);
 	
 	// New random seed necessary for new pattern
-	noiseSeed(random()*1000);
+	noiseSeed(random()*100000);
 
 	setupFlowfield();
-	createParticles();
+	createPattern();
 }
 
 function setupFlowfield() {
 	flowfield = new Flowfield(scl, flowfieldMag);
 }
 
-// Creates an array of particles to push around the screen by the flowfield
-function createParticles() {
-	for (let i=0; i<numberOfParticles; i++) {
-		let col = color(randomGaussian(110, 20), 2);
-		particles[i] = new Particle(col);	
-	}
+function createPattern() {
+	pattern = new Pattern(numberOfParticles);
 }
 
 // Fade sketch into background through additive blending
