@@ -3,8 +3,11 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [0.5.0] 17-04-01
 ### Changed
 - var -> let
+- Lots of refactoring
 
 ### Added
 - Canvas resizes with window. Also resets with resize.
