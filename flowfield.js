@@ -96,7 +96,7 @@ function Flowfield(scl, flowfieldMagnitude) {
 
 	// Toggle flowfield visibility
 	this.toggleVisibility = function() {
-		isFlowfieldVisible = !this.isFlowfieldVisible;
+		isFlowfieldVisible = !isFlowfieldVisible;
 		console.log('flowfield visible: ' + isFlowfieldVisible);
 	};
 
