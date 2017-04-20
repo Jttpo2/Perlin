@@ -22,7 +22,7 @@ function Particle(col) {
 
 	this.applyForce = function(force) {
 		this.acc.add(force);
-	};
+	}; 
 
 	this.show = function() {
 		// stroke(this.color, this.alpha);

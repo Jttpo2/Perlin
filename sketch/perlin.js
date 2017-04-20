@@ -13,7 +13,7 @@ let noiseOctaves = 1;
 let falloff = 0.2;
 
 // Framerate html holder
-let fr; 
+// let fr; 
 
 // Pattern
 let pattern;
@@ -53,12 +53,12 @@ function setup() {
 		);
 
 	// Set parent html element
-	canvas.parent('sketch-holder');
+	// canvas.parent('sketch-holder');
 
 	background(bgColor);
 
 	// Framerate holder, <p> element
-	fr = createP('');
+	// fr = createP('');
 
 	setupFlowfield();
 	createPattern();

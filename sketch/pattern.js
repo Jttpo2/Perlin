@@ -15,6 +15,6 @@ function Pattern(noOfparticles) {
 			this.particles[i].update();
 			this.particles[i].show();
 			this.particles[i].edges();
-		}
+		} 
 	};
 }
