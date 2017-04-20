@@ -4,7 +4,7 @@ let mouseAttractionscalar = 10;
 
 // Flowfield globals for optimization purposes
 let v;
-let flowfieldVectorPos; 
+let flowfieldVectorPos;
 let mousePos;
 let dist;
 let flowfieldVectorColor; // For test drawing vector flowfield
@@ -108,12 +108,12 @@ function Flowfield(scl, flowfieldMagnitude) {
 
 	// Switch between attraction and repulsion modes
 	this.toggleMouseAttractRepel = function() {
-		if (mouseMode == MouseModeEnum.ATTRACT) {
-			mouseMode = MouseModeEnum.REPEL;
-		} else if (mouseMode == MouseModeEnum.REPEL) {
-			mouseMode = MouseModeEnum.ATTRACT;
+		if (this.mouseMode == MouseModeEnum.ATTRACT) {
+			this.mouseMode = MouseModeEnum.REPEL;
+		} else if (this.mouseMode == MouseModeEnum.REPEL) {
+			this.mouseMode = MouseModeEnum.ATTRACT;
 		}
-		console.log('mouse mode: ' + mouseMode);
+		console.log('mouse mode: ' + this.mouseMode);
 	};
 }
 
