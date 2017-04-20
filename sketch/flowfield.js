@@ -4,7 +4,7 @@ let mouseAttractionscalar = 10;
 
 // Flowfield globals for optimization purposes
 let v;
-let flowfieldVectorPos;
+let flowfieldVectorPos; 
 let mousePos;
 let dist;
 let flowfieldVectorColor; // For test drawing vector flowfield
