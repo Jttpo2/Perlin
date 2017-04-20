@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Gulp.
+- Concatenated version for deployment.
+- concatindex.html for testing.
+- .gitgnore.
+
+### Changed
+- File system refactoring.
+
 ## [0.5.0] 17-04-01
 ### Changed
 - var -> let
