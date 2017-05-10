@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [0.7.0] 17-05-10
+### Changed
+- Fade cycle measured in frames instead of millis.
+
 ## [0.6.0] 17-04-20
 ### Added
 - Gulp.
