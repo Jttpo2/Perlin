@@ -31,9 +31,8 @@ let bgColor = 255;
 let alphaValue = 2;
 
 // Pattern cycle timer
-// The pattern 'fades in' over this time amount
-// let cycleTimeInMillis = 14*1000;
-let cycleTimeInMillis = 15*1000;
+// The pattern 'fades in' over this frame amount
+let cycleTimeInFrames = 40*15; // Framerate * time in seconds
 let timerEndTime;
 
 // Fadeout
@@ -64,7 +63,7 @@ function setup() {
 	createPattern();
 
 	// Start new pattern timer
-	setTimer(cycleTimeInMillis);
+	setTimer(cycleTimeInFrames);
 
 	flowfieldVectorColor = color(240, 240, 240, 10);
 	desiredVectorColor = color(200, 25, 25, 1);
@@ -243,7 +242,7 @@ function handlePatternCycle() {
 			stopFading();
 			
 			reset();
-			setTimer(cycleTimeInMillis);
+			setTimer(cycleTimeInFrames);
 		} else {
 			// Fade faster with time
 			accelerateFading();
@@ -252,13 +251,13 @@ function handlePatternCycle() {
 }
 
 // Sets new pattern timer
-function setTimer(millisAhead) {
-	timerEndTime = millis() + millisAhead;
+function setTimer(framesAhead) {
+	timerEndTime = frameCount + framesAhead;
 }
 
 // Returns whether the new pattern timer has run out
 function checkTimer() {
-	return timerEndTime < millis();
+	return timerEndTime < frameCount;
 }
 
 // P5 hook function for window resizing
