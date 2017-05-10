@@ -3,7 +3,7 @@
 
 // Visual perlin noise experiment
 
-let windowScale = 0.7; // What portion of the window for the canvas to take up  
+let windowScale = 1; // What portion of the window for the canvas to take up  
 
 // Perlin noise
 let increment = 0.1;
