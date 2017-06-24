@@ -11,6 +11,7 @@ gulp.task('watch', function() {
 	gulp.watch('**/*.css', ['reload', 'copy-css']);
 	gulp.watch('sketch/**/*.js', ['concat', 'reload']);
 	gulp.watch('**/*.html', ['reload']);
+	gulp.watch('**/README.md', ['copy-readme']);
 });
 
 gulp.task('reload', function() {
@@ -38,5 +39,10 @@ gulp.task('concat', function() {
 
 gulp.task('copy-css', function() {
 	gulp.src('style.css')
+	.pipe(gulp.dest(deploymentFolder));
+});
+
+gulp.task('copy-readme', function() {
+	gulp.src('README.md')
 	.pipe(gulp.dest(deploymentFolder));
 });
