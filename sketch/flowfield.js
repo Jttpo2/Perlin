@@ -11,7 +11,7 @@ let flowfieldVectorColor; // For test drawing vector flowfield
 let desiredVectorColor; // For test drawing vector flowfield
 let desired;
 let isFlowfieldVisibleFromStart = false;
-let isDesiredVectorsVisibleFromStart = false;
+let isDesiredVectorsVisibleFromStart = true;
 
 function Flowfield(scl, flowfieldMagnitude) {
 	this.scl = scl;
@@ -43,7 +43,7 @@ function Flowfield(scl, flowfieldMagnitude) {
 				this.vectors[index] = v;
 
 				if (isFlowfieldVisible) {
-					this.drawVector(v, x * this.scl, y * this.scl, flowfieldVectorColor); 
+					this.drawVector(v, x * this.scl, y * this.scl, flowfieldVectorColor);
 				}
 
 				xOff += increment;
@@ -60,7 +60,7 @@ function Flowfield(scl, flowfieldMagnitude) {
 		} else {
 			flowfieldVectorPos = createVector(vectorPosX * this.scl, vectorPosY * this.scl);
 			mousePos = createVector(mouseX, mouseY);
-			dist = mousePos.dist(flowfieldVectorPos);		
+			dist = mousePos.dist(flowfieldVectorPos);
 
 			if (dist < MAX_MOUSE_AFFECT_DIST) {
 				// Within mouse affecting distance
@@ -116,5 +116,3 @@ function Flowfield(scl, flowfieldMagnitude) {
 		console.log('mouse mode: ' + this.mouseMode);
 	};
 }
-
-
